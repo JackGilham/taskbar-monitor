@@ -16,7 +16,8 @@ namespace TaskbarMonitor
             LIGHT,
             CUSTOM            
         }
-        public static readonly int LATESTOPTIONSVERSION = 5;
+        public static readonly int LATESTOPTIONSVERSION = 6;
+        public const string DefaultLibreHardwareMonitorUrl = "http://127.0.0.1:8085/data.json";
         public int OptionsVersion = LATESTOPTIONSVERSION;
         public Dictionary<string, CounterOptions> CounterOptions { get; set; }
         public int HistorySize { get; set; } = 50;
@@ -26,11 +27,15 @@ namespace TaskbarMonitor
         public bool EnableOnAllMonitors { get; set; } = true;
         public Dictionary<string, MonitorOptions> MonitorOptions { get; set; } = new Dictionary<string, MonitorOptions>();
 
+        /// <summary>LibreHardwareMonitor web server endpoint used by the CPU TEMP counter.</summary>
+        public string LibreHardwareMonitorUrl { get; set; } = DefaultLibreHardwareMonitorUrl;
+
         public void CopyTo(Options opt)
         {
             opt.HistorySize = this.HistorySize;
             opt.PollTime = this.PollTime;
             opt.ThemeType = this.ThemeType;
+            opt.LibreHardwareMonitorUrl = this.LibreHardwareMonitorUrl;
             if(opt.CounterOptions == null)
                 opt.CounterOptions = new Dictionary<string, CounterOptions>();
             
@@ -178,6 +183,7 @@ namespace TaskbarMonitor
                     Order = 5
                 });
             }
+            AddTemperatureCounters(opt.CounterOptions, 6);
             /*
             if (BLL.WindowsInformation.IsWindows11())
             {
@@ -296,10 +302,45 @@ namespace TaskbarMonitor
                     if (item.Key.StartsWith("GPU") && item.Value.GraphType != Counters.ICounter.CounterType.SINGLE)
                         item.Value.GraphType = Counters.ICounter.CounterType.SINGLE;
                 }
-                
+
             }
-            this.OptionsVersion = LATESTOPTIONSVERSION;              
+            if (this.OptionsVersion <= 5)
+            {
+                // v6: CPU and GPU temperature graphs, appended after the existing ones
+                int nextOrder = this.CounterOptions.Values.Select(x => x.Order ?? 0).DefaultIfEmpty(-1).Max() + 1;
+                AddTemperatureCounters(this.CounterOptions, nextOrder);
+                ret = true;
+            }
+            this.OptionsVersion = LATESTOPTIONSVERSION;
             return ret;
+        }
+
+        private static void AddTemperatureCounters(Dictionary<string, CounterOptions> counters, int firstOrder)
+        {
+            int order = firstOrder;
+            if (!counters.ContainsKey(Counters.CounterCPUTemp.CounterName))
+                counters.Add(Counters.CounterCPUTemp.CounterName, TemperatureCounterOptions(order++));
+            if (!counters.ContainsKey(Counters.CounterGPUTemp.CounterName) && Counters.CounterGPUTemp.IsAvailable())
+                counters.Add(Counters.CounterGPUTemp.CounterName, TemperatureCounterOptions(order++));
+        }
+
+        private static CounterOptions TemperatureCounterOptions(int order)
+        {
+            return new CounterOptions
+            {
+                GraphType = TaskbarMonitor.Counters.ICounter.CounterType.SINGLE,
+                SeparateScales = true,
+                InvertOrder = false,
+                SummaryPosition = TaskbarMonitor.CounterOptions.DisplayPosition.TOP,
+                CurrentValueAsSummary = true,
+                ShowCurrentValueShadowOnHover = true,
+                ShowCurrentValue = TaskbarMonitor.CounterOptions.DisplayType.SHOW,
+                TitlePosition = TaskbarMonitor.CounterOptions.DisplayPosition.MIDDLE,
+                ShowTitle = TaskbarMonitor.CounterOptions.DisplayType.HOVER,
+                Enabled = true,
+                ShowTitleShadowOnHover = true,
+                Order = order
+            };
         }
     }
 

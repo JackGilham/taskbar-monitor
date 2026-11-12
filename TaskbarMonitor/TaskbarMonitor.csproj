@@ -72,6 +72,8 @@
     <Compile Include="Counters\CounterDisk.cs" />
     <Compile Include="Counters\CounterMemory.cs" />
     <Compile Include="Counters\CounterCPU.cs" />
+    <Compile Include="Counters\CounterCPUTemp.cs" />
+    <Compile Include="Counters\CounterGPUTemp.cs" />
     <Compile Include="Counters\ICounter.cs" />
     <Compile Include="Counters\PerformanceCounterReader.cs" />
     <Compile Include="CSDeskBand.cs" />

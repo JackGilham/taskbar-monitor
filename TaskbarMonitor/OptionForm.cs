@@ -81,6 +81,16 @@ namespace TaskbarMonitor
                 {
                     TaskbarMonitor.Counters.ICounter.CounterType.SINGLE
                 }
+                },
+                {Counters.CounterCPUTemp.CounterName,  new List<TaskbarMonitor.Counters.ICounter.CounterType>
+                {
+                    TaskbarMonitor.Counters.ICounter.CounterType.SINGLE
+                }
+                },
+                {Counters.CounterGPUTemp.CounterName,  new List<TaskbarMonitor.Counters.ICounter.CounterType>
+                {
+                    TaskbarMonitor.Counters.ICounter.CounterType.SINGLE
+                }
                 }
             };
                 InitializeComponent();
