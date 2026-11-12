@@ -17,9 +17,6 @@ namespace TaskbarMonitor.Counters
         {
 
         }
-        List<PerformanceCounter> netCountersSent;
-        List<PerformanceCounter> netCountersReceived;
-        string[] instances = null;
         //Dictionary<CounterType, List<CounterInfo>> info = new Dictionary<CounterType, List<CounterInfo>>();
 
         internal override void Initialize(PerformanceCounterReader reader)

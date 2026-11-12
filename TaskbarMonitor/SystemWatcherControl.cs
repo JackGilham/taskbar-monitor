@@ -62,7 +62,6 @@ namespace TaskbarMonitor
         
         System.Drawing.Font fontCounter;
         Font fontTitle;
-        int lastSize = 30;
         bool mouseOver = false;
         public GraphTheme customTheme;
         GraphTheme darkTheme;
@@ -72,7 +71,6 @@ namespace TaskbarMonitor
 
 
         Deskband AssociatedDeskband = null;
-        TaskbarManager sTask;
 
         public SystemWatcherControl(Monitor monitor, bool verticalMode = false, Deskband associatedDeskband = null)//CSDeskBand.CSDeskBandWin w, 
         {
@@ -135,12 +133,6 @@ namespace TaskbarMonitor
             this.Invalidate();
         }
 
-        protected override void OnHandleDestroyed(EventArgs e)
-        {
-            if(sTask != null)
-                sTask.RemoveControls();
-            base.OnHandleDestroyed(e);
-        }
 
         private GraphTheme GetTheme(Options opt)
         {

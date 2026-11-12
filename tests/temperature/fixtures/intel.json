@@ -1,0 +1,8 @@
+{"id":0,"Text":"Sensor","Children":[{"id":1,"Text":"PC","Children":[
+ {"id":2,"Text":"Intel Core i7-13700K","HardwareId":"/intelcpu/0","Children":[{"id":3,"Text":"Temperatures","Children":[
+  {"id":4,"Text":"CPU Core #1","SensorId":"/intelcpu/0/temperature/0","Type":"Temperature","RawValue":"58.0 °C","Value":"58.0 °C","Children":[]},
+  {"id":5,"Text":"CPU Core #1 Distance to TjMax","SensorId":"/intelcpu/0/temperature/1","Type":"Temperature","RawValue":"42.0 °C","Value":"42.0 °C","Children":[]},
+  {"id":6,"Text":"CPU Package","SensorId":"/intelcpu/0/temperature/2","Type":"Temperature","RawValue":"61.0 °C","Value":"61.0 °C","Children":[]},
+  {"id":7,"Text":"Core Max","SensorId":"/intelcpu/0/temperature/3","Type":"Temperature","RawValue":"64.0 °C","Value":"64.0 °C","Children":[]}
+ ]}]}
+]}]}

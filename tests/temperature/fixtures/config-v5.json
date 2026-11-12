@@ -1,0 +1,45 @@
+{
+  "OptionsVersion": 5,
+  "CounterOptions": {
+    "CPU": {
+      "GraphType": 1,
+      "Order": 0,
+      "Enabled": true
+    },
+    "MEM": {
+      "GraphType": 0,
+      "Order": 1,
+      "Enabled": true
+    },
+    "DISK": {
+      "GraphType": 1,
+      "Order": 2,
+      "Enabled": true
+    },
+    "NET": {
+      "GraphType": 1,
+      "Order": 3,
+      "Enabled": true
+    },
+    "GPU 3D": {
+      "GraphType": 0,
+      "Order": 4,
+      "Enabled": true
+    },
+    "GPU MEM": {
+      "GraphType": 0,
+      "Order": 5,
+      "Enabled": true
+    }
+  },
+  "HistorySize": 40,
+  "PollTime": 1,
+  "ThemeType": 1,
+  "EnableOnAllMonitors": false,
+  "MonitorOptions": {
+    "TEST-DISPLAY": {
+      "Position": 1,
+      "Enabled": false
+    }
+  }
+}

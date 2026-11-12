@@ -47,7 +47,7 @@ namespace TaskbarMonitor.BLL
                 {
                     winInfo.Add(winInfoGet(handle));
                 }
-                catch (Exception ex) { }
+                catch (Exception) { }
             }
             return winInfo;
         }
@@ -381,7 +381,7 @@ namespace TaskbarMonitor.BLL
                                   select c.Handle;
                     return handles.ToList<IntPtr>();
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     return null;
                 }
@@ -423,7 +423,7 @@ namespace TaskbarMonitor.BLL
                     GetWindowThreadProcessId(this.Handle, out processID);
                     return Process.GetProcessById(processID);
                 }
-                catch (Exception ex) { return null; }
+                catch (Exception) { return null; }
             }
         }
 
@@ -445,7 +445,7 @@ namespace TaskbarMonitor.BLL
                                   select s.Handle;
                     return handles.ToList<IntPtr>();
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     return null;
                 }
@@ -464,7 +464,7 @@ namespace TaskbarMonitor.BLL
                     int dummy = 0;
                     return GetWindowThreadProcessId(this.Handle, out dummy);
                 }
-                catch (Exception ex) { return -1; }
+                catch (Exception) { return -1; }
             }
         }
 

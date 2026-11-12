@@ -125,7 +125,7 @@ namespace TaskbarMonitor.Counters
 
                 return true;
             }
-            catch (InvalidOperationException ex)
+            catch (InvalidOperationException)
             {
                 return false;
             }

@@ -1,0 +1,3 @@
+{"Text":"Sensor","Children":[{"Text":"Ryzen","HardwareId":"/amdcpu/0","Children":[{"Text":"Temperatures","Children":[
+ {"Text":"Core (Tctl/Tdie)","SensorId":"/amdcpu/0/temperature/2","Type":"Temperature","RawValue":"45,6 °C","Value":"45,6 °C","Children":[]}
+]}]}]}

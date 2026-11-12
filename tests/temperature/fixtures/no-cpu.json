@@ -1,0 +1,3 @@
+{"Text":"Sensor","Children":[{"Text":"GPU","HardwareId":"/gpu-amd/0","Children":[{"Text":"Temperatures","Children":[
+ {"Text":"GPU Core","SensorId":"/gpu-amd/0/temperature/0","Type":"Temperature","RawValue":"55.0 °C","Children":[]}
+]}]}]}

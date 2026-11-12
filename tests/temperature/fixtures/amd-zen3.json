@@ -1,0 +1,18 @@
+{"id":0,"Text":"Sensor","Min":"Min","Value":"Value","Max":"Max","ImageURL":"","Children":[
+ {"id":1,"Text":"TEST-PC","Min":"","Value":"","Max":"","ImageURL":"images_icon/computer.png","Children":[
+  {"id":2,"Text":"AMD Ryzen 7 5800X3D","Min":"","Value":"","Max":"","HardwareId":"/amdcpu/0","ImageURL":"images_icon/cpu.png","Children":[
+   {"id":3,"Text":"Temperatures","Min":"","Value":"","Max":"","ImageURL":"images_icon/temperature.png","Children":[
+    {"id":4,"Text":"Core (Tctl/Tdie)","Min":"100.6 °F","Value":"113.2 °F","Max":"159.8 °F","SensorId":"/amdcpu/0/temperature/2","Type":"Temperature","RawMin":"38.1 °C","RawValue":"45.1 °C","RawMax":"71.0 °C","ImageURL":"images/transparent.png","Children":[]},
+    {"id":5,"Text":"CCD1 (Tdie)","Min":"","Value":"109.4 °F","Max":"","SensorId":"/amdcpu/0/temperature/3","Type":"Temperature","RawMin":"40.0 °C","RawValue":"43.0 °C","RawMax":"69.0 °C","ImageURL":"images/transparent.png","Children":[]}
+   ]},
+   {"id":6,"Text":"Load","Min":"","Value":"","Max":"","ImageURL":"images_icon/load.png","Children":[
+    {"id":7,"Text":"CPU Total","Min":"0.1 %","Value":"5.0 %","Max":"100.0 %","SensorId":"/amdcpu/0/load/0","Type":"Load","RawMin":"0.1 %","RawValue":"5.0 %","RawMax":"100.0 %","ImageURL":"images/transparent.png","Children":[]}
+   ]}
+  ]},
+  {"id":8,"Text":"AMD Radeon RX 9070 XT","Min":"","Value":"","Max":"","HardwareId":"/gpu-amd/0","ImageURL":"images_icon/ati.png","Children":[
+   {"id":9,"Text":"Temperatures","Min":"","Value":"","Max":"","ImageURL":"images_icon/temperature.png","Children":[
+    {"id":10,"Text":"GPU Core","Min":"","Value":"131.0 °F","Max":"","SensorId":"/gpu-amd/0/temperature/0","Type":"Temperature","RawMin":"30.0 °C","RawValue":"55.0 °C","RawMax":"60.0 °C","ImageURL":"images/transparent.png","Children":[]}
+   ]}
+  ]}
+ ]}
+]}

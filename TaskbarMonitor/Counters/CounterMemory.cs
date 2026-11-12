@@ -38,7 +38,6 @@ namespace TaskbarMonitor.Counters
         [return: MarshalAs(UnmanagedType.Bool)]
         static extern bool GetPhysicallyInstalledSystemMemory(out long TotalMemoryInKilobytes);
 
-        PerformanceCounter ramCounter;        
         long totalMemory = 0;
 
         internal override void Initialize(PerformanceCounterReader reader)
