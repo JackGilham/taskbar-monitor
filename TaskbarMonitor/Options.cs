@@ -26,6 +26,8 @@ namespace TaskbarMonitor
 
         public bool EnableOnAllMonitors { get; set; } = true;
         public Dictionary<string, MonitorOptions> MonitorOptions { get; set; } = new Dictionary<string, MonitorOptions>();
+        public bool UsePhysicalMonitorIds { get; set; }
+        public Dictionary<string, MonitorOptions> PhysicalMonitorOptions { get; set; } = new Dictionary<string, MonitorOptions>(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>LibreHardwareMonitor web server endpoint used by the CPU TEMP counter.</summary>
         public string LibreHardwareMonitorUrl { get; set; } = DefaultLibreHardwareMonitorUrl;
@@ -59,6 +61,12 @@ namespace TaskbarMonitor
             }
 
             opt.EnableOnAllMonitors = this.EnableOnAllMonitors;
+            opt.UsePhysicalMonitorIds = this.UsePhysicalMonitorIds;
+            opt.PhysicalMonitorOptions = new Dictionary<string, MonitorOptions>(StringComparer.OrdinalIgnoreCase);
+            foreach (KeyValuePair<string, MonitorOptions> item in this.PhysicalMonitorOptions)
+            {
+                opt.PhysicalMonitorOptions.Add(item.Key, CopyMonitorOptions(item.Value));
+            }
 
             if (opt.MonitorOptions == null)
                 opt.MonitorOptions = new Dictionary<string, MonitorOptions>();
@@ -80,6 +88,75 @@ namespace TaskbarMonitor
             }
 
         }
+        public MonitorOptions GetMonitorOptions(string deviceName, string physicalId)
+        {
+            MonitorOptions options;
+            if (UsePhysicalMonitorIds)
+            {
+                if (!string.IsNullOrEmpty(physicalId) && PhysicalMonitorOptions.TryGetValue(physicalId, out options))
+                {
+                    return CopyMonitorOptions(options);
+                }
+                // A missing selected monitor must not transfer its setting to another display.
+                return new MonitorOptions { Enabled = false };
+            }
+            if (deviceName != null && MonitorOptions.TryGetValue(deviceName, out options))
+            {
+                return CopyMonitorOptions(options);
+            }
+            return new MonitorOptions();
+        }
+
+        public void SetMonitorOptions(string deviceName, string physicalId, MonitorOptions options)
+        {
+            if (UsePhysicalMonitorIds)
+            {
+                if (string.IsNullOrEmpty(physicalId))
+                {
+                    throw new InvalidOperationException("This monitor is not ready. Reopen Settings after all displays are connected.");
+                }
+                PhysicalMonitorOptions[physicalId] = CopyMonitorOptions(options);
+            }
+            else
+            {
+                MonitorOptions[deviceName] = CopyMonitorOptions(options);
+            }
+        }
+
+        public void BindMonitorIdentities(IDictionary<string, string> identities)
+        {
+            HashSet<string> uniqueIds = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            if (identities.Count == 0)
+            {
+                throw new InvalidOperationException("No connected displays were found. Reopen Settings after your displays are ready.");
+            }
+            foreach (string identity in identities.Values)
+            {
+                if (string.IsNullOrEmpty(identity) || !uniqueIds.Add(identity))
+                {
+                    throw new InvalidOperationException("A monitor could not be identified uniquely. Reopen Settings after all displays are ready in extended desktop mode.");
+                }
+            }
+
+            Dictionary<string, MonitorOptions> bound = new Dictionary<string, MonitorOptions>(StringComparer.OrdinalIgnoreCase);
+            foreach (KeyValuePair<string, MonitorOptions> item in PhysicalMonitorOptions)
+            {
+                bound.Add(item.Key, CopyMonitorOptions(item.Value));
+            }
+            foreach (KeyValuePair<string, string> item in identities)
+            {
+                // Store enabled/right explicitly too; omission no longer means enable an unknown screen.
+                bound[item.Value] = GetMonitorOptions(item.Key, item.Value);
+            }
+            PhysicalMonitorOptions = bound;
+            UsePhysicalMonitorIds = true;
+        }
+
+        private static MonitorOptions CopyMonitorOptions(MonitorOptions options)
+        {
+            return new MonitorOptions { Enabled = options.Enabled, Position = options.Position };
+        }
+
         public static Options DefaultOptions()
         {
             var opt = new Options

@@ -20,6 +20,7 @@ namespace TaskbarMonitor
 
         private CounterOptions ActiveCounter = null;
         private bool initializing = true;
+        private readonly Dictionary<string, string> monitorIdentities = MonitorIdentity.Capture();
         Dictionary<string, IList<TaskbarMonitor.Counters.ICounter.CounterType>> AvailableGraphTypes;
 
         //SystemWatcherControl originalControl = null;
@@ -701,17 +702,43 @@ namespace TaskbarMonitor
 
         private void UpdateMonitorForm()
         {
-            Screen selectedScreen = screenPositioning1.SelectedScreen;
-            var opt = Options.MonitorOptions.ContainsKey(selectedScreen.DeviceName) ? Options.MonitorOptions[selectedScreen.DeviceName] : null;
-            if (opt == null)
+            bool wasInitializing = initializing;
+            initializing = true;
+            try
             {
-                chkMonitorEnabled.Checked = true;
-                listMonitorPosition.SelectedItem = MonitorOptions.DisplayPosition.RIGHT.ToString();
-            }
-            else
-            {
+                Screen selectedScreen = screenPositioning1.SelectedScreen;
+                string physicalId;
+                monitorIdentities.TryGetValue(selectedScreen.DeviceName, out physicalId);
+                MonitorOptions opt = Options.GetMonitorOptions(selectedScreen.DeviceName, physicalId);
                 chkMonitorEnabled.Checked = opt.Enabled;
                 listMonitorPosition.SelectedItem = opt.Position.ToString();
+            }
+            finally
+            {
+                initializing = wasInitializing;
+            }
+        }
+
+        private bool PrepareMonitorSave()
+        {
+            try
+            {
+                if (!MonitorIdentity.SameDisplays(monitorIdentities, MonitorIdentity.Capture()))
+                {
+                    throw new InvalidOperationException("Your displays changed while Settings was open. Reopen Settings before saving.");
+                }
+                Options.BindMonitorIdentities(monitorIdentities);
+                return true;
+            }
+            catch (InvalidOperationException ex)
+            {
+                if (Options.EnableOnAllMonitors)
+                {
+                    // Showing on every taskbar does not require a unique physical selection.
+                    return true;
+                }
+                MessageBox.Show(this, ex.Message, "Monitor settings", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return false;
             }
         }
 
@@ -730,36 +757,32 @@ namespace TaskbarMonitor
         private void chkMonitorEnabled_CheckedChanged(object sender, EventArgs e)
         {
             if (initializing) return;
-            Screen selectedScreen = screenPositioning1.SelectedScreen;
-            var opt = Options.MonitorOptions.ContainsKey(selectedScreen.DeviceName) ? Options.MonitorOptions[selectedScreen.DeviceName] : null;
-            if (opt == null)
-            {
-                opt = new MonitorOptions();
-                Options.MonitorOptions.Add(selectedScreen.DeviceName, opt); 
-            }
-            opt.Enabled = chkMonitorEnabled.Checked;
-
-            if(opt.Enabled && opt.Position == MonitorOptions.DisplayPosition.RIGHT)
-            {
-                Options.MonitorOptions.Remove(selectedScreen.DeviceName);
-            }
+            UpdateSelectedMonitorOptions();
         }
 
         private void listMonitorPosition_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (initializing) return;
-            Screen selectedScreen = screenPositioning1.SelectedScreen;
-            var opt = Options.MonitorOptions.ContainsKey(selectedScreen.DeviceName) ? Options.MonitorOptions[selectedScreen.DeviceName] : null;
-            if (opt == null)
-            {
-                opt = new MonitorOptions();
-                Options.MonitorOptions.Add(selectedScreen.DeviceName, opt);
-            }
-            opt.Position = (MonitorOptions.DisplayPosition)Enum.Parse(typeof(MonitorOptions.DisplayPosition), listMonitorPosition.SelectedItem.ToString());
+            UpdateSelectedMonitorOptions();
+        }
 
-            if (opt.Enabled && opt.Position == MonitorOptions.DisplayPosition.RIGHT)
+        private void UpdateSelectedMonitorOptions()
+        {
+            Screen selectedScreen = screenPositioning1.SelectedScreen;
+            string physicalId;
+            monitorIdentities.TryGetValue(selectedScreen.DeviceName, out physicalId);
+            try
             {
-                Options.MonitorOptions.Remove(selectedScreen.DeviceName);
+                Options.SetMonitorOptions(selectedScreen.DeviceName, physicalId, new MonitorOptions
+                {
+                    Enabled = chkMonitorEnabled.Checked,
+                    Position = (MonitorOptions.DisplayPosition)Enum.Parse(typeof(MonitorOptions.DisplayPosition), listMonitorPosition.SelectedItem.ToString())
+                });
+            }
+            catch (InvalidOperationException ex)
+            {
+                MessageBox.Show(this, ex.Message, "Monitor settings", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                UpdateMonitorForm();
             }
         }
 
@@ -770,6 +793,10 @@ namespace TaskbarMonitor
 
         private void buttonApply_Click(object sender, EventArgs e)
         {
+            if (!PrepareMonitorSave())
+            {
+                return;
+            }
             this.Options.CopyTo(this.OriginalOptions);
             this.Options.SaveToDisk();
 
@@ -781,6 +808,10 @@ namespace TaskbarMonitor
 
         private void buttonOK_Click(object sender, EventArgs e)
         {
+            if (!PrepareMonitorSave())
+            {
+                return;
+            }
             this.Options.CopyTo(this.OriginalOptions);
             this.Options.SaveToDisk();
 

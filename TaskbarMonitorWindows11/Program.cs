@@ -160,6 +160,11 @@ namespace TaskbarMonitorWindows11
  
             private void OpenSettings(int activeIndex = 0)
             {
+                if (taskbarManager.MainControl == null)
+                {
+                    MessageBox.Show("The Windows taskbar is not ready yet. Try opening Settings again in a few seconds.", Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return;
+                }
                 var qtd = Application.OpenForms.OfType<OptionForm>();
                 OptionForm optForm = null;
                 if (qtd.Count() == 0)
