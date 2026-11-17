@@ -6,6 +6,9 @@ LibreHardwareMonitor's local web server; GPU temperature comes from Windows
 D3DKMT. See [temperature maintenance notes](docs/temperature-maintenance.md)
 for the source history, setup, build and validation commands, and upgrade guidance.
 
+The fork also preserves per-screen selections across display-name changes and
+retries taskbar attachment during startup. See [monitor selection](docs/monitor-selection.md).
+
 DeskBand with monitoring charts (CPU and memory) for Windows
 
 This app shows some cool graphs displaying CPU and memory usage on the taskbar (as a Desk Band).
